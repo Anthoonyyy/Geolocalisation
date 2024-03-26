@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Géolocalisation</title>
+    
+</head>
+<body>
+    <h1>Géolocalisation ex 3</h1>
+    <span id="lat"></span>
+    <span id="long"></span>
+    <span id="alti"></span>
+    
+    <script>
+     
+        
+            function positionTrouvee(position) {
+            document.getElementById("lat").textContent = position.coords.latitude + " °";
+            document.getElementById("long").textContent = position.coords.longitude + " °";
+            document.getElementById("alti").textContent = position.coords.altitude + " m";
+}
+            function erreurPosition(erreur) {
+                switch(erreur.code) {
+                    case erreur.PERMISSION_DENIED:
+                        alert("PERMISSION_DENIED : l'utilisateur n'a pas autorisé l'accès à sa position."); 
+                    break;
+                    case erreur.POSITION_UNAVAILABLE:
+                        alert("POSITION_UNAVAILABLE : la position n'a pas pu être déterminée.");
+                     break;
+                    case erreur.TIMEOUT:
+                        alert("TIMEOUT : le service n'a pas répondu à temps.");
+                    break;
+                    case erreur.UNKNOWN_ERROR:
+                        alert("UNKNOWN_ERROR : une erreur inconnue s'est produite");}
+}
+        navigator.geolocation.getCurrentPosition(positionTrouvee, erreurPosition);
+        
+
+    </script>
+</body>
+</html>

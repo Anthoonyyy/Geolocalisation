@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Géolocalisation</title>
+    
+</head>
+<body>
+    <h1>Géolocalisation ex 2</h1>
+    <button id="test">Test</button><br />
+    <p id="status"></p>
+    
+    <script>
+        const bouton = document.querySelector("#test");
+        const paragraphe = document.querySelector("#status");
+        function detecterGeoLoc(){
+            
+            if (!navigator.geolocation){
+               paragraphe.textContent = "Geolocation is not supported by your browser";
+            }
+            else {
+                paragraphe.textContent = "Geolocation supported";
+                } 
+        }
+        document.querySelector("#test").addEventListener("click", detecterGeoLoc);
+
+    </script>
+</body>
+</html>
