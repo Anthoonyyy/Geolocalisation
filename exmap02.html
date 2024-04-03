@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <link rel="stylesheet" href="exeCartes.css">
+    <title>EX 02 MAP</title>
+</head>
+<body>
+    <h1>Recherche de la position (plus précise)</h1>
+    <button onclick="recherchePositionPrecise();">Recherche</button>
+    <p id="message"></p>
+    <p id="message_suite"></p>
+    <!--Affichage de la carte-->
+    <div id="carte"></div>
+
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+    <!--Ajout d'un fichier JS pour définir notre carte-->
+    <script src="script.js"></script>
+    <script>
+
+        let latitudeCentreCarte;
+        let longitudeCentreCarte;
+        let precisionCarte;
+
+
+
+
+
+        function recherchePosition() {
+            if (detecterGeoLoc()) {
+                // recherche de la position ou erreur
+                document.getElementById("message").innerHTML = "Je recherche";
+                navigator.geolocation.getCurrentPosition(positionTrouvee,erreurPosition);
+            } else {
+                // Pas de géolocalisation
+                document.getElementById("message").innerHTML = "La géolocalisation n'est pas supportée sur ce navigateur";
+            }
+        }
+
+        function recherchePositionPrecise() {
+            if (detecterGeoLoc()) {
+                // recherche de la position ou erreur
+                document.getElementById("message").innerHTML = "Je recherche";
+                navigator.geolocation.getCurrentPosition(positionTrouveePrecise,erreurPosition,{
+                    enableHighAccuracy:true, timeout:10000, maximumAge:0
+                });
+            } else {
+                // Pas de géolocalisation
+                document.getElementById("message").innerHTML = "La géolocalisation n'est pas supportée sur ce navigateur";
+            }
+        }
+
+        function detecterGeoLoc() {
+            if (navigator.geolocation) {
+                return true;    // géolocalisation supportée
+            } else {
+                return false;   // pas de géolocalisation
+            }
+        }
+
+
+        function positionTrouveePrecise(position) {
+            let lat = position.coords.latitude;
+            let lng = position.coords.longitude;
+            let alti = position.coords.altitude;
+
+            let precision = position.coords.accuracy;
+            let altiPrecision = position.coords.altitudeAccuracy + " m";
+            let moment = new Date(position.timestamp);
+            moment = moment.toLocaleString("fr-FR");
+            let direction = position.coords.heading + " °";
+            let vitesse = position.coords.speed + " m/s";           
+
+            latitudeCentreCarte = lat;
+            longitudeCentreCarte = lng;
+            precisionCarte = precision;
+
+            document.getElementById("message").innerHTML = `Votre position est : Latitude ${lat}° Longitude ${lng}°.${alti==null ? 'Altitude' : ''}`;
+            document.getElementById("message_suite").innerHTML = `Précision de la mesure : ${precision}. La mesure a été prise le ${moment} `;
+
+        }        
+        function erreurPosition(erreur) {
+            switch(erreur.code) {
+                case erreur.PERMISSION_DENIED: document.getElementById("message").innerHTML = "PERMISSION_DENIED : l'utilisateur n'a pas autorisé l'accès à sa position."; break;
+                case erreur.POSITION_UNAVAILABLE: document.getElementById("message").innerHTML = "POSITION_UNAVAILABLE : la position n'a pas pu être déterminée."; break;
+                case erreur.TIMEOUT: document.getElementById("message").innerHTML = "TIMEOUT : le service n'a pas répondu à temps."; break;
+                case erreur.UNKNOWN_ERROR: document.getElementById("message").innerHTML = "UNKNOWN_ERROR : une erreur inconnue s'est produite";
+            }
+
+        }
+
+    </script>
+    <script src="exmap02.js"></script>
+</body>
+</html>
