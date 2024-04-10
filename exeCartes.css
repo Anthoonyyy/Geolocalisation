@@ -1,6 +1,9 @@
 #carte { 
     height: 600px; /*Dimension de la carte*/
  }
+ #map{
+    height: 500px;
+ }
 h1{
     text-align: center;
 }
@@ -34,4 +37,11 @@ h1{
     top: -65%;
     left: 10%;
     text-align: justify;
+}
+
+.rouge{
+    color: red;
+}
+h1,h3{
+    text-align: center;
 }

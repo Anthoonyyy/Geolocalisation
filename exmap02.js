@@ -1,34 +1,63 @@
-//On prend les positions approximatives du CF2M (à vérifier en fonction de la précision)
+function afficherPosition(){
+    trouverPosition(ma_carte, true, 16);
+}
 
-let latitudeCF2m = 50.825540;
-let longitudeCF2m = 4.338905;
-let zoomcarte = 14; //Zoom de la carte de 1 à 20
+/* ==================== Géolocalisation ======================================================*/
 
-//On utilise un objet de type L.map de la bibliothèque leaflet qui permet de définir une carte
+function trouverPosition(carteName, afficher, zoom) {
+    /* Pour centrer la carte en fonction de la position détectée */
+    carteName.locate({setView: afficher, maxZoom: zoom, enableHighaccuracy: true});
 
-//Centrage de la carte sur la position que la géolocalisation à donnée
-//Mais tant qu'il n'y a pas de recherche, la position est indéfini.
-//Donc il faut donner une valeur initiales aux variables
-latitudeCentreCarte = latitudeCF2m;
-longitudeCentreCarte = longitudeCF2m;
-precisionCarte =0;
-let carte = L.map('carte').setView([latitudeCentreCarte, longitudeCentreCarte], zoomcarte);
+    carteName.on('locationerror', onLocationError);
+    carteName.on('locationfound', onLocationFound);
+}
 
-//Choix d'un fond de carte 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+function onLocationFound(e) {
+    const radius = Math.round(e.accuracy);
+    const longitude = e.longitude;
+    const latitude = e.latitude;
+
+    L.marker(e.latlng).addTo(ma_carte)
+        .bindPopup(`<h3>Votre position estimée</h3>
+        <p>longitude: ${longitude}° - latitude: ${latitude}°</p>
+        <p>Vous êtes situé dans un rayon de ${radius} mètres autour de ce point</p>`)
+        .openPopup();
+
+    L.circle(e.latlng, radius).addTo(ma_carte);
+}
+
+function onLocationError(e) {
+    alert(e.message);
+}
+
+/* ===================================== Marqueurs =========================================== */
+
+function marqueurCF2m(){
+    return ajouterMarqueur(CF2m);
+}
+
+function ajouterMarqueur(position){
+    return L.marker(position).addTo(ma_carte);
+}
+
+/* Position du CF2m */
+const CF2m = L.latLng(50.8256748, 4.3384882);
+
+/* Centrer la carte sur le CF2m */
+/* Zoom = 19 -> Bâtiment */
+/* Zoom = 17 -> Rue */
+/* Zoom = 15 -> Commune */    
+/* Zoom = 11/12 -> Région BXL */
+/* Zoom = 7/8 -> Belgique */
+/* NB: Avec zoomSnap, on n'est pas obligé d'avoir des valeurs entières. On définit le pas entre chaque valeur. */
+const ma_carte = L.map('carte',{zoomSnap:0.25}).setView(CF2m, 15.5);
+
+/* Mettre un fond de carte */
+const fond = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(carteCF2m);
+}).addTo(ma_carte);
 
-//Ajouter un marqueurs sur la carte
- let markerCf2m = L.marker([latitudeCentreCarte, longitudeCentreCarte]).addTo(carteCF2m);
-
- var circle = L.circle([latitudeCentreCarte, longitudeCentreCarte], {
-    color: 'red',
-    fillColor: '#f03',
-    fillOpacity: 0.5,
-    radius: precisionCarte=10
-}).addTo(carteCF2m);
 
 
 
